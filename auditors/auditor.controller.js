@@ -24,7 +24,7 @@ async function logUserAction(req, res, next){
 
 }
 
-function fetchLogCount(req, res, next){
+function fetchLogCount(req, res, next){     // Find the total number of documents present to facilitate proper pagination.
     let userID = req.params.userID;
     User.findOne({_id:userID},async(err, result) => {
         if(result.userAuditor == true){
@@ -34,12 +34,12 @@ function fetchLogCount(req, res, next){
     });
 }
 
-function fetchLogData(req, res, next){
+function fetchLogData(req, res, next){ // Fetch entries from the Auditor collection with respect on the page number.
 
     let pageNumber = req.params.pageNumber;
 
     User.findOne({_id:req.params.userID},(err, result) => {
-        if(result.userAuditor == true){
+        if(result.userAuditor == true){     // Only User's with auditor function are allowed to use the /audit GET API.
             Auditor.find({},{_id:0, _v:0,}, (err, result) => {
                 res.json(result);
             }).sort({logDate:1}).limit(10).skip( pageNumber > 1 ? ( ( pageNumber - 1 ) * 10 ) : 0 );
